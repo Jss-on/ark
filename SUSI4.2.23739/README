@@ -1,0 +1,24 @@
+===============================================================================
+Linux SUSI Driver
+===============================================================================
+
+        Please carefully read the terms and conditions in license.rtf
+
+-------------------------------------------------------------------------------
+How to install/uninstall SUSI driver & run demo AP
+-------------------------------------------------------------------------------
+        1) Extract the gzip file.
+           user$ tar zxf SUSI4_DEMO_SAMPLE.gz
+        2) Execute install.sh to install SUSI.
+           root# ./SUSI4.1.X/Driver/install.sh
+        3) Execute demo AP.
+           root# ./SUSI4.1.X/Susi4Demo/susidemo4
+        4) Execute install.sh with parameter "u" to uninstall SUSI.
+           root# ./SUSI4.1.X/Driver/install.sh u
+
+-------------------------------------------------------------------------------
+Compile Sample Sources AP
+-------------------------------------------------------------------------------
+        1) *.c are the sample sources.
+        2) Make sure all libSUSI-4.00.* in your sample sources folder.
+        3) Refer to "Makefile", then use "make" to compile it.

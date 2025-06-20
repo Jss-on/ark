@@ -1,0 +1,32 @@
+# Makefile for the SUSI API Watchdog Test Application
+# For Ubuntu Linux
+
+CC = gcc
+CFLAGS = -Wall -Wextra -std=c99 -D_GNU_SOURCE
+
+# SUSI paths - adjust these based on your actual SUSI installation
+# Try to find the SUSI headers in different locations
+SUSI_INCLUDE = -I./SUSI4.2.23739/Susi4Demo -I./ARK-3533_SUSI4.2.23739_Release_2023_07_27_ubuntu22.04_x64/SUSI4.2.23739/SUSIDeviceDEMO/GSENSORDEMO -I/usr/include/SUSI
+
+# Try different lib paths and library names
+SUSI_LDFLAGS = -L./SUSI4.2.23739/Driver -L./SUSI4.2.23739/Susi4Demo -L/usr/lib -L/usr/local/lib
+LIBS = -lSUSI-4.00 -lm -lpthread
+# If the above fails, try these alternatives:
+# LIBS = -lSUSI-4.0 -lm -lpthread
+# LIBS = -lSUSI-3.02 -lm -lpthread
+
+TARGET = watchdog_test
+SOURCE = watchdog_test_app.c
+
+.PHONY: all clean
+
+all: $(TARGET)
+
+$(TARGET): $(SOURCE)
+	$(CC) $(CFLAGS) $(SUSI_INCLUDE) -o $(TARGET) $(SOURCE) $(SUSI_LDFLAGS) $(LIBS)
+	@echo ""
+	@echo "Build complete! Run the application with: ./watchdog_test"
+	@echo ""
+
+clean:
+	rm -f $(TARGET)

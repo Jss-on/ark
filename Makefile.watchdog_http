@@ -1,0 +1,56 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -O2 -std=c99 -D_GNU_SOURCE
+LDFLAGS = 
+
+# Path to SUSI API library - matching working Makefile.watchdog_test
+SUSI_INCLUDE = -I./SUSI4.2.23739/Susi4Demo -I./SUSI4.2.23739/SUSIDeviceDEMO/GSENSORDEMO
+SUSI_LDFLAGS = -L./SUSI4.2.23739/Driver -L./SUSI4.2.23739/Susi4Demo -L/usr/lib -L/usr/local/lib
+
+# Libraries
+LIBS = -lSUSI-4.00 -lm -lpthread -lmicrohttpd -ljansson
+
+# All targets
+all: watchdog_http_service
+
+# Check if library files exist (useful for troubleshooting)
+check-libs:
+	@echo "Checking for required libraries..."
+	@echo "SUSI library path: ./SUSI4.2.23739/Driver"
+	@ls -la ./SUSI4.2.23739/Driver/libSUSI*.so* || echo "ERROR: SUSI library files not found!"
+	@echo "Looking for libmicrohttpd..."
+	@find /usr -name "libmicrohttpd.so*" 2>/dev/null || echo "libmicrohttpd not found in standard locations"
+	@echo "Looking for libjansson..."
+	@find /usr -name "libjansson.so*" 2>/dev/null || echo "libjansson not found in standard locations"
+
+# Build the watchdog HTTP service
+watchdog_http_service: watchdog_http_service.c
+	$(CC) $(CFLAGS) $(SUSI_INCLUDE) -o watchdog_http_service watchdog_http_service.c \
+		$(SUSI_LDFLAGS) $(LIBS)
+
+# Alternative build with explicit library path (try this if standard build fails)
+alt-build: watchdog_http_service.c
+	$(CC) $(CFLAGS) $(SUSI_INCLUDE) -o watchdog_http_service watchdog_http_service.c \
+		./SUSI4.2.23739/Driver/libSUSI-4.00.so $(SUSI_LDFLAGS) $(LIBS)
+
+# Install required dependencies
+# On Debian/Ubuntu: sudo apt-get install libmicrohttpd-dev libjansson-dev
+# On RedHat/CentOS: sudo yum install libmicrohttpd-devel jansson-devel
+deps:
+	@echo "Installing required dependencies..."
+	@echo "On Debian/Ubuntu: sudo apt-get install libmicrohttpd-dev libjansson-dev"
+	@echo "On RedHat/CentOS: sudo yum install libmicrohttpd-devel jansson-devel"
+	@echo "On Windows with MSYS2: pacman -S mingw-w64-x86_64-libmicrohttpd mingw-w64-x86_64-jansson"
+
+# Clean build artifacts
+clean:
+	rm -f watchdog_http_service
+
+# Run the service (with sudo if needed for SUSI API access)
+run:
+	LD_LIBRARY_PATH=./SUSI4.2.23739/Driver:$$LD_LIBRARY_PATH ./watchdog_http_service
+
+# Run with sudo
+run-sudo:
+	sudo LD_LIBRARY_PATH=./SUSI4.2.23739/Driver:$$LD_LIBRARY_PATH ./watchdog_http_service
+
+.PHONY: all deps clean run run-sudo check-libs alt-build
